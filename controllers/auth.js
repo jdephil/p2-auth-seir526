@@ -12,8 +12,9 @@ router.get('/register', function (req, res) {
 })
 
 //l ogin get route
-router.get('login', function(req, res) {
+router.get('/login', function(req, res) {
     res.render('auth/login')
 })
 
 // login post route
+module.exports = router;
