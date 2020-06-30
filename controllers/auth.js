@@ -56,16 +56,24 @@ router.post('/login', function(req, res) {
         if (!user) {
             req.flash('error', 'invalid username or password')
             // save to our user session no username
-            // redirect our user to try logging in again
+            req.session.save(function() {
+                // redirect our user to try logging in again
+                return res.redirect('/auth/login')
+            })
+            
         }
         if (error) {
-            // TODO: add next param from function
-            return error
+            return next(error)
         }
         req.login(function(user, error) {
             // if error move to error
+            if (error) next(error)
             // if success flash success message
+            req.flash('success', 'you are validated and logged in')
             // if sucess save session and redirect user
+            req.session.save(function() {
+                return res.redirect('/')
+            })
         })
     })
 })
