@@ -26,7 +26,10 @@ router.post('/register', function(req, res) {
         if (created) {
             // authenticate user and start authorization process
             console.log('user created 👑')
-            res.redirect('/')
+            passport.authenticate('local', {
+                successRedirect: '/profile',
+                successFlash: 'Thanks for signing up!'
+            })(req, res)
         } else {
             // if user already exists
             console.log('user email already exists 🙈')
@@ -48,9 +51,9 @@ router.get('/login', function(req, res) {
 })
 
 // login post route
-// TODO: add next param to function
-router.post('/login', function(req, res) {
-    passport.authenticate(local, function(err, user, info) {
+
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(error, user, info) {
         // if no user authenticated
         if (!user) {
             req.flash('error', 'invalid username or password')
@@ -64,7 +67,7 @@ router.post('/login', function(req, res) {
         if (error) {
             return next(error)
         }
-        req.login(function(user, error) {
+        req.login(user, function(error) {
             // if error move to error
             if (error) next(error)
             // if success flash success message
@@ -74,7 +77,7 @@ router.post('/login', function(req, res) {
                 return res.redirect('/')
             })
         })
-    })
+    })(req, res, next)
 })
 
 router.post('login', passport.authenticate('local', {
