@@ -5,7 +5,7 @@ const router = express.Router()
 // import db
 const db = require('../models')
 // import middleware
-const flash = require('flash')
+const flash = require('connect-flash')
 const passport = require('../config/ppConfig')
 
 // register get router
@@ -57,11 +57,9 @@ router.post('/login', function(req, res, next) {
         // if no user authenticated
         if (!user) {
             req.flash('error', 'invalid username or password')
-            // save to our user session no username
-            req.session.save(function() {
                 // redirect our user to try logging in again
                 return res.redirect('/auth/login')
-            })
+            
             
         }
         if (error) {
@@ -74,18 +72,18 @@ router.post('/login', function(req, res, next) {
             req.flash('success', 'you are validated and logged in')
             // if sucess save session and redirect user
             req.session.save(function() {
-                return res.redirect('/')
+                return res.redirect('/profile')
             })
         })
     })(req, res, next)
 })
 
-router.post('login', passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/auth/login',
-    successFlash: 'welcome to our app',
-    failureFlash: 'invalid username or password'
-}))
+// router.post('login', passport.authenticate('local', {
+//     successRedirect: '/',
+//     failureRedirect: '/auth/login',
+//     successFlash: 'welcome to our app',
+//     failureFlash: 'invalid username or password'
+// }))
 
 router.get('/logout', function(req, res) {
     req.logout()
